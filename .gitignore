@@ -1,8 +1,8 @@
 # Rust
 /target
 
-# Environment Variables
-/.env
-
 # IntelliJ IDEA
 /.idea
+
+# Environment
+/.env
