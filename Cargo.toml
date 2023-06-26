@@ -8,6 +8,7 @@ edition = "2021"
 time = "0.3.22"
 
 # Data
+regex = "1.8.4"
 yahoo_finance_api = { version = "2.0.0", features = ["blocking"] }
 
 # Model

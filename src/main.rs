@@ -5,7 +5,7 @@ use crate::data::fetcher::TimeUnit;
 use crate::model::{calculate_increase, should_buy};
 
 fn main() {
-    let symbol = "AAPL";
+    let symbol = "AMC";
     let time = TimeUnit::Days(5);
 
     let pure_data = data::fetcher::fetch(symbol, &time).unwrap();
