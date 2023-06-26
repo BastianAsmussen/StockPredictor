@@ -1,10 +1,34 @@
+extern crate log;
+
+use actix_web::{App, HttpServer};
+use log::info;
+
+use crate::api::routes;
+
 mod data;
 mod model;
+mod api;
 
-use crate::data::fetcher::TimeUnit;
-use crate::model::{calculate_increase, should_buy};
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Instantiate the logger.
+    env_logger::init();
 
-fn main() {
+    info!("Starting up...");
+
+    // Start a HTTP server.
+    HttpServer::new(|| {
+        App::new()
+            .service(routes::index)
+            .service(routes::predict)
+    })
+        .workers(4)
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await?;
+
+    Ok(())
+    /*
     let symbol = "AMC";
     let time = TimeUnit::Years(1);
 
@@ -21,4 +45,5 @@ fn main() {
     println!("Should buy? {}", should_buy);
     println!("Increase: {}%", increase);
     println!("Predicted quote: ${}", prediction.last().unwrap());
+     */
 }

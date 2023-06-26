@@ -1,4 +1,5 @@
 use regex::Regex;
+use serde::Deserialize;
 use time::{Duration, OffsetDateTime};
 use yahoo_finance_api as yahoo;
 
@@ -41,7 +42,8 @@ pub fn fetch(symbol: &str, time: &TimeUnit) -> Result<Vec<(f64, f64)>, Box<dyn s
 /// * `Weeks` - The number of weeks ago to fetch the data for.
 /// * `Months` - The number of months ago to fetch the data for.
 /// * `Years` - The number of years ago to fetch the data for.
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
+#[serde(tag = "time", content = "value")]
 pub enum TimeUnit {
     Seconds(u64),
     Minutes(u64),
