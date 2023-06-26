@@ -22,7 +22,7 @@ pub fn predict(
     let mut predictions = Vec::new();
     for _ in 0..time.get_number() {
         let prediction = model.predict(&array);
-        last_quote = *prediction.first().unwrap();
+        last_quote = prediction[0];
 
         predictions.push(last_quote);
     }
