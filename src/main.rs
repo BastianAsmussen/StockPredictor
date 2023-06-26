@@ -6,7 +6,7 @@ use crate::model::{calculate_increase, should_buy};
 
 fn main() {
     let symbol = "AMC";
-    let time = TimeUnit::Days(5);
+    let time = TimeUnit::Years(1);
 
     let pure_data = data::fetcher::fetch(symbol, &time).unwrap();
     let mapped_data = data::mapper::convert_data(&pure_data).unwrap();
