@@ -4,3 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# General
+time = "0.3.22"
+
+# Data
+yahoo_finance_api = { version = "2.0.0", features = ["blocking"] }
+
+# Model
+ndarray = "0.15.6"
+
+linfa = "0.6.1"
+linfa-linear = "0.6.1"
