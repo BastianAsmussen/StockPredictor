@@ -1,7 +1,7 @@
 use actix_web::{get, Responder, web};
-use serde::Deserialize;
 use log::info;
-use crate::data::fetcher::TimeUnit;
+
+use crate::api::Request;
 
 #[get("/")]
 pub async fn index() -> impl Responder {
@@ -10,13 +10,13 @@ pub async fn index() -> impl Responder {
 
 #[get("/predict")]
 pub async fn predict(info: web::Json<Request>) -> impl Responder {
-    info!("Predicting... {:?}", info);
+    // Get the request data.
+    let info = info.into_inner();
 
-    "Predicted!"
-}
+    info!("Predicting for symbol {}...", info.symbol);
 
-#[derive(Debug, Deserialize)]
-pub struct Request {
-    symbol: String,
-    time: TimeUnit,
+    // Handle the request.
+    let response = crate::api::handle_request(&info).await;
+
+    serde_json::to_string(&response).unwrap()
 }

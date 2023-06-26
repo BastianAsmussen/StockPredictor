@@ -1,5 +1,5 @@
 use regex::Regex;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use time::{Duration, OffsetDateTime};
 use yahoo_finance_api as yahoo;
 
@@ -11,7 +11,7 @@ use yahoo_finance_api as yahoo;
 ///
 /// # Returns
 /// A vector containing tuples of the open and adjusted close prices, or an error.
-pub fn fetch(symbol: &str, time: &TimeUnit) -> Result<Vec<(f64, f64)>, Box<dyn std::error::Error>> {
+pub async fn fetch(symbol: &str, time: &TimeUnit) -> Result<Vec<(f64, f64)>, Box<dyn std::error::Error>> {
     // Make sure the ticker symbol is valid.
     validate_symbol(symbol)?;
 
@@ -20,7 +20,7 @@ pub fn fetch(symbol: &str, time: &TimeUnit) -> Result<Vec<(f64, f64)>, Box<dyn s
     // Find out when the symbol was first listed.
     let (start, end) = get_time(time.as_seconds());
 
-    let response = provider.get_quote_history(symbol, start, end)?;
+    let response = provider.get_quote_history(symbol, start, end).await?;
     let quotes = response.quotes()?;
 
     // Map the quotes to a vector of tuples containing the open and adjusted close prices.
@@ -42,7 +42,7 @@ pub fn fetch(symbol: &str, time: &TimeUnit) -> Result<Vec<(f64, f64)>, Box<dyn s
 /// * `Weeks` - The number of weeks ago to fetch the data for.
 /// * `Months` - The number of months ago to fetch the data for.
 /// * `Years` - The number of years ago to fetch the data for.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "time", content = "value")]
 pub enum TimeUnit {
     Seconds(u64),
