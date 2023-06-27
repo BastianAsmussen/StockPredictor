@@ -18,15 +18,16 @@ pub fn convert_data(
     let mut y = Vec::new();
 
     // Iterate over the data and split it into the open and adjusted close prices.
-    for (open, close) in data.iter() {
+    for (close, adj_close) in data.iter() {
         x.push(*close);
-        y.push(*open);
+        y.push(*adj_close);
     }
 
     // Convert the vectors into arrays.
     let x = Array::from(x.clone()).into_shape((x.len(), 1))?;
     let y = Array::from(y);
 
+    // Create the dataset.
     let dataset = Dataset::new(x, y);
 
     Ok(dataset)
