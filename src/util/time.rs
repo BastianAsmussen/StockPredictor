@@ -32,11 +32,11 @@ pub enum TimeUnit {
 }
 
 impl TimeUnit {
-    /// Gets the number of the time unit.
+    /// Gets the value of the time unit.
     ///
     /// # Returns
-    /// The number of the time unit.
-    pub fn get_number(&self) -> u64 {
+    /// The value of the time unit.
+    pub fn get_value(&self) -> u64 {
         match self {
             TimeUnit::Seconds(seconds) => *seconds,
             TimeUnit::Minutes(minutes) => *minutes,
@@ -92,10 +92,16 @@ impl Display for TimeUnit {
 ///
 /// # Returns
 /// A tuple containing the start and end times.
-pub fn get_time(seconds: u64) -> Result<(OffsetDateTime, OffsetDateTime), Box<dyn std::error::Error>> {
+pub fn get_time(
+    seconds: u64,
+) -> Result<(OffsetDateTime, OffsetDateTime), Box<dyn std::error::Error>> {
     // If the seconds exceeds the minimum or maximum time, return an error.
     if !(MINIMUM_TIME..=MAXIMUM_TIME).contains(&seconds) {
-        return Err(format!("The number of seconds must be between {:.} and {:.}!", MINIMUM_TIME, MAXIMUM_TIME).into());
+        return Err(format!(
+            "The number of seconds must be between {:.} and {:.}!",
+            MINIMUM_TIME, MAXIMUM_TIME
+        )
+        .into());
     }
 
     // Make sure the time is not in the future.
