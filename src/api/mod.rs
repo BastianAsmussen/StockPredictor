@@ -1,7 +1,10 @@
 use log::error;
-
-use crate::model::calculate_increase;
 use serde::{Deserialize, Serialize};
+
+use crate::data::mapper::convert_data;
+use crate::model::calculate_increase;
+use crate::model::predictor::predict;
+use crate::model::trainer::train;
 use crate::util::time::TimeUnit;
 
 pub mod routes;
@@ -24,6 +27,9 @@ pub struct Request {
 ///
 /// # Fields
 /// * `request` - The request data.
+/// * `error_message` - The error message.
+/// * `current_adjusted_close` - The current adjusted close price.
+/// * `model_score` - The model score (lower is better).
 /// * `predictions` - The predictions.
 /// * `increase` - The increase.
 /// * `should_buy` - Whether or not the stock should be bought.
@@ -32,6 +38,8 @@ pub struct Request {
 pub struct Response {
     request: Request,
     error_message: Option<String>,
+    current_adjusted_close: Option<f64>,
+    model_r2_score: Option<f64>,
     predictions: Option<Vec<f64>>,
     increase: Option<f64>,
     should_buy: Option<bool>,
@@ -41,7 +49,8 @@ pub async fn handle_request(info: &Request) -> Response {
     // Fetch the data.
     let pure_data = crate::data::fetcher::fetch(&info.symbol, &info.dataset_size).await;
     if pure_data.is_err() {
-        let error_message = format!("Failed to fetch data for symbol {}! {}",
+        let error_message = format!(
+            "Failed to fetch data for symbol {}! {}",
             info.symbol,
             pure_data.err().unwrap()
         );
@@ -50,6 +59,8 @@ pub async fn handle_request(info: &Request) -> Response {
         return Response {
             request: info.clone(),
             error_message: Some(error_message),
+            current_adjusted_close: None,
+            model_r2_score: None,
             predictions: None,
             increase: None,
             should_buy: None,
@@ -57,10 +68,14 @@ pub async fn handle_request(info: &Request) -> Response {
     }
     let pure_data = pure_data.unwrap();
 
+    // Get the last quote.
+    let (.., adj_close) = *pure_data.last().unwrap();
+
     // Convert the data.
-    let mapped_data = crate::data::mapper::convert_data(&pure_data);
+    let mapped_data = convert_data(&pure_data);
     if mapped_data.is_err() {
-        let error_message = format!("Failed to convert data for symbol {}! {}",
+        let error_message = format!(
+            "Failed to convert data for symbol {}! {}",
             info.symbol,
             mapped_data.err().unwrap()
         );
@@ -69,6 +84,8 @@ pub async fn handle_request(info: &Request) -> Response {
         return Response {
             request: info.clone(),
             error_message: Some(error_message),
+            current_adjusted_close: Some(adj_close),
+            model_r2_score: None,
             predictions: None,
             increase: None,
             should_buy: None,
@@ -77,9 +94,10 @@ pub async fn handle_request(info: &Request) -> Response {
     let mapped_data = mapped_data.unwrap();
 
     // Train the model.
-    let model = crate::model::trainer::train(&mapped_data);
+    let model = train(&mapped_data);
     if model.is_err() {
-        let error_message = format!("Failed to train model for symbol {}! {}",
+        let error_message = format!(
+            "Failed to train model for symbol {}! {}",
             info.symbol,
             model.err().unwrap()
         );
@@ -88,19 +106,19 @@ pub async fn handle_request(info: &Request) -> Response {
         return Response {
             request: info.clone(),
             error_message: Some(error_message),
+            current_adjusted_close: Some(adj_close),
+            model_r2_score: None,
             predictions: None,
             increase: None,
             should_buy: None,
         };
     }
-    let model = model.unwrap();
+    let (model, r2_score) = model.unwrap();
 
-    // Predict the data.
-    let (.., close) = pure_data.last().unwrap();
-
-    let predictions = crate::model::predictor::predict(&model, *close, &info.time);
+    let predictions = predict(&model, adj_close, &info.time);
     if predictions.is_err() {
-        let error_message = format!("Failed to predict data for symbol {}! {}",
+        let error_message = format!(
+            "Failed to predict data for symbol {}! {}",
             info.symbol,
             predictions.err().unwrap()
         );
@@ -109,6 +127,8 @@ pub async fn handle_request(info: &Request) -> Response {
         return Response {
             request: info.clone(),
             error_message: Some(error_message),
+            current_adjusted_close: Some(adj_close),
+            model_r2_score: Some(r2_score),
             predictions: None,
             increase: None,
             should_buy: None,
@@ -117,7 +137,7 @@ pub async fn handle_request(info: &Request) -> Response {
     let predictions = predictions.unwrap();
 
     // Calculate the increase.
-    let start = *close;
+    let start = adj_close;
     let end = *predictions.last().unwrap();
     let increase = calculate_increase(start, end);
 
@@ -128,6 +148,8 @@ pub async fn handle_request(info: &Request) -> Response {
     Response {
         request: info.clone(),
         error_message: None,
+        current_adjusted_close: Some(adj_close),
+        model_r2_score: Some(r2_score),
         predictions: Some(predictions),
         increase: Some(increase),
         should_buy: Some(should_buy),
