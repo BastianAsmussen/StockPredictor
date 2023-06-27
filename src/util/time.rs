@@ -62,6 +62,22 @@ impl TimeUnit {
             TimeUnit::Years(years) => *years * 60 * 60 * 24 * 365,
         }
     }
+
+    /// Converts the time unit to days.
+    ///
+    /// # Returns
+    /// The number of days in the time unit.
+    pub fn as_days(&self) -> u64 {
+        match self {
+            TimeUnit::Seconds(seconds) => *seconds / 60 / 60 / 24,
+            TimeUnit::Minutes(minutes) => *minutes / 60 / 24,
+            TimeUnit::Hours(hours) => *hours / 24,
+            TimeUnit::Days(days) => *days,
+            TimeUnit::Weeks(weeks) => *weeks * 7,
+            TimeUnit::Months(months) => *months * 30,
+            TimeUnit::Years(years) => *years * 365,
+        }
+    }
 }
 
 impl Display for TimeUnit {
