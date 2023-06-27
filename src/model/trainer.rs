@@ -13,7 +13,7 @@ use ndarray::{ArrayBase, Ix1, Ix2, OwnedRepr};
 pub fn train(
     mapped_data: &DatasetBase<ArrayBase<OwnedRepr<f64>, Ix2>, ArrayBase<OwnedRepr<f64>, Ix1>>,
 ) -> Result<FittedLinearRegression<f64>, Box<dyn std::error::Error>> {
-    let model = LinearRegression::new().fit(mapped_data)?;
+    let model = LinearRegression::default().fit(mapped_data)?;
 
     Ok(model)
 }
