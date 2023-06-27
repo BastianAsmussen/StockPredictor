@@ -18,8 +18,8 @@ pub fn convert_data(
     let mut y = Vec::new();
 
     // Iterate over the data and split it into the open and adjusted close prices.
-    for (close, adj_close) in data.iter() {
-        x.push(*close);
+    for (open, adj_close) in data.iter() {
+        x.push(*open);
         y.push(*adj_close);
     }
 

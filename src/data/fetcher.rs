@@ -29,7 +29,7 @@ pub async fn fetch(
     // Map the quotes to a vector of tuples containing the open and adjusted close prices.
     let data = quotes
         .iter()
-        .map(|quote| (quote.close, quote.adjclose))
+        .map(|quote| (quote.open, quote.adjclose))
         .collect::<Vec<(f64, f64)>>();
 
     Ok(data)
