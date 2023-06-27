@@ -1,3 +1,4 @@
+use crate::data::fetcher::fetch;
 use log::error;
 use serde::{Deserialize, Serialize};
 
@@ -47,7 +48,7 @@ pub struct Response {
 
 pub async fn handle_request(info: &Request) -> Response {
     // Fetch the data.
-    let pure_data = crate::data::fetcher::fetch(&info.symbol, &info.dataset_size).await;
+    let pure_data = fetch(&info.symbol, &info.dataset_size).await;
     if pure_data.is_err() {
         let error_message = format!(
             "Failed to fetch data for symbol {}! {}",
@@ -69,7 +70,7 @@ pub async fn handle_request(info: &Request) -> Response {
     let pure_data = pure_data.unwrap();
 
     // Get the last quote.
-    let (.., adj_close) = *pure_data.last().unwrap();
+    let (open, adj_close) = *pure_data.last().unwrap();
 
     // Convert the data.
     let mapped_data = convert_data(&pure_data);
@@ -115,7 +116,7 @@ pub async fn handle_request(info: &Request) -> Response {
     }
     let (model, r2_score) = model.unwrap();
 
-    let predictions = predict(&model, adj_close, &info.time);
+    let predictions = predict(&model, open, &info.time);
     if predictions.is_err() {
         let error_message = format!(
             "Failed to predict data for symbol {}! {}",
