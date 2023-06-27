@@ -17,11 +17,12 @@ pub fn predict(
     mut last_quote: f64,
     time: &TimeUnit,
 ) -> Result<Vec<f64>, Box<dyn std::error::Error>> {
-    let array = Array::from_elem((1, 1), last_quote);
 
     let mut predictions = Vec::new();
     for _ in 0..time.get_number() {
+        let array = Array::from_elem((1, 1), last_quote);
         let prediction = model.predict(&array);
+
         last_quote = prediction[0];
 
         predictions.push(last_quote);
