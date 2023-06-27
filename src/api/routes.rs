@@ -1,7 +1,7 @@
 use actix_web::{get, web, Responder};
 use log::info;
 
-use crate::api::Request;
+use crate::api::{handle_request, Request};
 
 #[get("/")]
 pub async fn index() -> impl Responder {
@@ -19,7 +19,7 @@ pub async fn predict(info: web::Json<Request>) -> impl Responder {
     );
 
     // Handle the request.
-    let response = crate::api::handle_request(&info).await;
+    let response = handle_request(&info).await;
 
     // Return the response as JSON.
     web::Json(response)
