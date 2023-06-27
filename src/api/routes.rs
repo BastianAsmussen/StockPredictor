@@ -1,4 +1,4 @@
-use actix_web::{get, Responder, web};
+use actix_web::{get, web, Responder};
 use log::info;
 
 use crate::api::Request;
@@ -13,10 +13,14 @@ pub async fn predict(info: web::Json<Request>) -> impl Responder {
     // Get the request data.
     let info = info.into_inner();
 
-    info!("Predicting for symbol {}...", info.symbol);
+    info!(
+        "Received request for symbol {} with time {:.} and dataset size {:.}...",
+        info.symbol, info.time, info.dataset_size
+    );
 
     // Handle the request.
     let response = crate::api::handle_request(&info).await;
 
-    serde_json::to_string(&response).unwrap()
+    // Return the response as JSON.
+    web::Json(response)
 }
