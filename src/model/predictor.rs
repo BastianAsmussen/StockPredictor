@@ -19,7 +19,7 @@ pub fn predict(
     time: &TimeUnit,
 ) -> Result<Vec<f64>, Box<dyn std::error::Error>> {
     let mut predictions = Vec::new();
-    for _ in 0..time.get_value() {
+    for _ in 0..time.as_days() {
         let array = Array::from_elem((1, 1), last_quote);
         let prediction = model.predict(&array);
 
