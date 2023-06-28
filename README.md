@@ -153,7 +153,6 @@ Predict the price of a stock using the power of machine learning!
    ### Windows
     ```sh
     set RUST_LOG=stock_predictor # Set the environment variable.
-    .\target\release\stock_predictor.exe
     ```
 5. Run the project.
    ### Linux
