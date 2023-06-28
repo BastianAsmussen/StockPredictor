@@ -118,5 +118,5 @@ Predict the price of a stock using the power of machine learning!
 | currentAdjustedClose | float   | The current adjusted close price of the stock.    |
 | modelR2Score         | float   | The R2 score of the model.                        |
 | predictions          | float[] | The predicted adjusted close prices of the stock. |
-| increase             | float   | The percentage increase or decrease of the stock. |
+| increase             | float   | The increase or decrease of the stock.            |
 | shouldBuy            | boolean | Whether or not the stock should be bought.        |
