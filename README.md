@@ -5,6 +5,7 @@ Predict the price of a stock using the power of machine learning!
 # Table of Contents
 
 * [Installation (Server Side)](#installation-server-side)
+* [Environment Variables (Server Side)](#environment-variables-server-side)
 * [Usage (Client Side)](#usage-client-side)
 * [Example Request](#example-request)
 * [Example Response](#example-response)
@@ -36,6 +37,14 @@ Predict the price of a stock using the power of machine learning!
     ```sh
     docker-compose up --env-file .env
     ```
+
+## Environment Variables (Server Side)
+
+| Variable | Description                                                 |
+|----------|-------------------------------------------------------------|
+| WORKERS  | The number of workers (threads) to use for the HTTP server. |
+| IP       | The IP address to use for the HTTP server.                  |
+| PORT     | The port to use for the HTTP server.                        |
 
 # Usage (Client Side)
 
