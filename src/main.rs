@@ -23,13 +23,12 @@ async fn main() -> std::io::Result<()> {
     // Initialize the logger.
     env_logger::init();
 
-    info!("Starting up...");
-
     // Load environment variables.
+    info!("Loading environment variables...");
     let (workers, (ip, port)) = load_env();
-    info!("Loaded environment variables!");
 
     // Start a HTTP server.
+    info!("Starting HTTP server...");
     HttpServer::new(|| App::new().service(routes::index).service(routes::predict))
         .workers(workers)
         .bind((ip, port))?
@@ -48,7 +47,7 @@ fn load_env() -> (usize, (String, u16)) {
 
     let workers = dotenv::var("WORKERS")
         .unwrap_or_else(|_| {
-            warn!("WORKERS not set! Using {}...", DEFAULT_WORKERS);
+            warn!("WORKERS not set, using {}...", DEFAULT_WORKERS);
 
             DEFAULT_WORKERS.to_string()
         })
@@ -56,13 +55,13 @@ fn load_env() -> (usize, (String, u16)) {
         .expect("WORKERS must be a number!");
 
     let ip = dotenv::var("IP").unwrap_or_else(|_| {
-        warn!("IP not set! Using {}", DEFAULT_IP);
+        warn!("IP not set, using {}...", DEFAULT_IP);
 
         DEFAULT_IP.to_string()
     });
     let port = dotenv::var("PORT")
         .unwrap_or_else(|_| {
-            warn!("PORT not set! Using {}", DEFAULT_PORT);
+            warn!("PORT not set, using {}...", DEFAULT_PORT);
 
             DEFAULT_PORT.to_string()
         })

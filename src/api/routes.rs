@@ -14,7 +14,7 @@ pub async fn predict(info: web::Json<Request>) -> impl Responder {
     let info = info.into_inner();
 
     info!(
-        "Received request for symbol {} with time {:.} and dataset size {:.}...",
+        "Received request for symbol {} in {:.} with dataset size of {:.}.",
         info.symbol, info.time, info.dataset_size
     );
 
