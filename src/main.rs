@@ -4,6 +4,7 @@ use actix_web::{App, HttpServer};
 use log::{info, warn};
 
 use crate::api::routes;
+use crate::model::nn;
 
 mod api;
 mod data;
@@ -21,19 +22,24 @@ const DEFAULT_PORT: u16 = 8080;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Initialize the logger.
-    env_logger::init();
+    // env_logger::init();
 
-    // Load environment variables.
-    info!("Loading environment variables...");
-    let (workers, (ip, port)) = load_env();
+    // // Load environment variables.
+    // info!("Loading environment variables...");
+    // let (workers, (ip, port)) = load_env();
+    //
+    // // Start a HTTP server.
+    // info!("Starting HTTP server...");
+    // HttpServer::new(|| App::new().service(routes::index).service(routes::predict))
+    //     .workers(workers)
+    //     .bind((ip, port))?
+    //     .run()
+    //     .await?;
 
-    // Start a HTTP server.
-    info!("Starting HTTP server...");
-    HttpServer::new(|| App::new().service(routes::index).service(routes::predict))
-        .workers(workers)
-        .bind((ip, port))?
-        .run()
-        .await?;
+    let test = nn::test_nn().await;
+    if test.is_err() {
+        println!("Error: {}", test.err().unwrap());
+    }
 
     Ok(())
 }

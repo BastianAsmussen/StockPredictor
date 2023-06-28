@@ -1,5 +1,6 @@
 pub mod predictor;
 pub mod trainer;
+pub mod nn;
 
 /// Calculates the increase between two numbers.
 ///
