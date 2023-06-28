@@ -111,3 +111,9 @@ real_data = np.reshape(real_data, (real_data.shape[0], real_data.shape[1], 1))
 prediction = model.predict(real_data)
 prediction = scaler.inverse_transform(prediction)
 print(f'Prediction: ${prediction[0][0]}')
+
+increase = (prediction[0][0] - actual_prices[-1]) / actual_prices[-1] * 100
+print(f'Increase: {increase}%')
+
+should_buy = increase > 0
+print(f'Should Buy? {should_buy}')
