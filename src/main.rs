@@ -12,7 +12,7 @@ mod util;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Instantiate the logger.
+    // Initialize the logger.
     env_logger::init();
 
     info!("Starting up...");
