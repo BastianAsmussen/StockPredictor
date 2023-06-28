@@ -62,20 +62,20 @@ Predict the price of a stock using the power of machine learning!
 
 ## Request Fields
 
-| Field       | Type   | Description                                        |
-|-------------|--------|----------------------------------------------------|
-| symbol      | string | The stock symbol.                                  |
-| time        | enum   | The time unit and value to use for the prediction. |
-| datasetSize | enum   | The time unit and value to use for the dataset.    |
+| Field       | Type   | Description                             |
+|-------------|--------|-----------------------------------------|
+| symbol      | string | The stock symbol.                       |
+| time        | object | The time unit and value to use.         |
+| datasetSize | object | The dataset size unit and value to use. |
 
 ## Time Unit Fields
 
-| Unit   | Description           |
-|--------|-----------------------|
-| days   | The number of days.   |
-| weeks  | The number of weeks.  |
-| months | The number of months. |
-| years  | The number of years.  |
+| Unit   | Value | Description                  |
+|--------|-------|------------------------------|
+| days   | int   | The number of days to use.   |
+| weeks  | int   | The number of weeks to use.  |
+| months | int   | The number of months to use. |
+| years  | int   | The number of years to use.  |
 
 # Example Response
 
