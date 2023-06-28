@@ -46,11 +46,12 @@ async fn main() -> std::io::Result<()> {
 fn load_env() -> (usize, (String, u16)) {
     dotenv::dotenv().ok();
 
-    let workers = dotenv::var("WORKERS").unwrap_or_else(|_| {
-        warn!("WORKERS not set! Using {}...", DEFAULT_WORKERS);
+    let workers = dotenv::var("WORKERS")
+        .unwrap_or_else(|_| {
+            warn!("WORKERS not set! Using {}...", DEFAULT_WORKERS);
 
-        DEFAULT_WORKERS.to_string()
-    })
+            DEFAULT_WORKERS.to_string()
+        })
         .parse()
         .expect("WORKERS must be a number!");
 
@@ -59,11 +60,12 @@ fn load_env() -> (usize, (String, u16)) {
 
         DEFAULT_IP.to_string()
     });
-    let port = dotenv::var("PORT").unwrap_or_else(|_| {
-        warn!("PORT not set! Using {}", DEFAULT_PORT);
+    let port = dotenv::var("PORT")
+        .unwrap_or_else(|_| {
+            warn!("PORT not set! Using {}", DEFAULT_PORT);
 
-        DEFAULT_PORT.to_string()
-    })
+            DEFAULT_PORT.to_string()
+        })
         .parse()
         .expect("PORT must be a number!");
 
