@@ -9,6 +9,7 @@ Predict the price of a stock using the power of machine learning!
 * [Usage (Client Side)](#usage-client-side)
 * [Example Request](#example-request)
 * [Example Response](#example-response)
+* [Compiling](#compiling)
 
 # Installation (Server Side)
 
@@ -129,3 +130,37 @@ Predict the price of a stock using the power of machine learning!
 | predictions          | float[] | The predicted adjusted close prices of the stock. |
 | increase             | float   | The increase or decrease of the stock.            |
 | shouldBuy            | boolean | Whether or not the stock should be bought.        |
+
+# Compiling
+
+1. Clone the repository.
+    ```sh
+    git clone https://github.com/BastianAsmussen/Stock-Predictor.git as stock_predictor
+    ```
+2. Change directory to the project folder.
+    ```sh
+    cd stock_predictor
+    ```
+3. Compile the project.
+    ```sh
+    cargo build --release
+    ```
+4. Getting logger information. (Optional)
+   ### Linux
+   ```sh
+   source RUST_LOG=stock_predictor # Set the environment variable.
+    ```
+   ### Windows
+    ```sh
+    set RUST_LOG=stock_predictor # Set the environment variable.
+    .\target\release\stock_predictor.exe
+    ```
+5. Run the project.
+   ### Linux
+    ```sh
+    ./target/release/stock_predictor
+    ```
+   ### Windows
+    ```sh
+    .\target\release\stock_predictor.exe
+    ```
