@@ -2,13 +2,10 @@ extern crate log;
 
 use actix_web::{App, HttpServer};
 use log::{info, warn};
-use time::macros::datetime;
-use time::OffsetDateTime;
 
 use crate::api::routes;
 
 mod api;
-mod data;
 mod model;
 mod util;
 
@@ -23,28 +20,19 @@ const DEFAULT_PORT: u16 = 8080;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Initialize the logger.
-    // env_logger::init();
+    env_logger::init();
 
-    // // Load environment variables.
-    // info!("Loading environment variables...");
-    // let (workers, (ip, port)) = load_env();
-    //
-    // // Start a HTTP server.
-    // info!("Starting HTTP server...");
-    // HttpServer::new(|| App::new().service(routes::index).service(routes::predict))
-    //     .workers(workers)
-    //     .bind((ip, port))?
-    //     .run()
-    //     .await?;
-    let symbol = "AAPL";
-    let period = "max";
-    let start = datetime!(2012-01-01 00:00:00 +0000);
-    let end = datetime!(2021-01-01 00:00:00 +0000);
-    let testing_days = 365;
-    let future_days = 1;
+    // Load environment variables.
+    info!("Loading environment variables...");
+    let (workers, (ip, port)) = load_env();
 
-    let predictions = model::predict(symbol, period, &start, &end, testing_days, future_days).await;
-    println!("{:#?}", predictions);
+    // Start a HTTP server.
+    info!("Starting HTTP server...");
+    HttpServer::new(|| App::new().service(routes::index).service(routes::predict_post))
+        .workers(workers)
+        .bind((ip, port))?
+        .run()
+        .await?;
 
     Ok(())
 }

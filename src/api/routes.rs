@@ -1,26 +1,40 @@
-use actix_web::{get, web, Responder};
-use log::info;
+use actix_web::{get, post, web, Responder};
+use log::{error, info};
 
-use crate::api::{handle_request, Request};
+use crate::api::{handle_request, Request, Response};
 
 #[get("/")]
 pub async fn index() -> impl Responder {
     "Please use the /predict endpoint to get a prediction."
 }
 
-#[get("/predict")]
-pub async fn predict(info: web::Json<Request>) -> impl Responder {
-    // Get the request data.
+#[post("/predict")]
+pub async fn predict_post(info: web::Json<Request>) -> impl Responder {
     let info = info.into_inner();
 
-    info!(
-        "Received request for symbol {} in {:.} with dataset size of {:.}.",
-        info.symbol, info.time, info.dataset_size
-    );
+    if info.id.is_some() {
+        let error_message = "Request ID must not be set on POST requests!".to_string();
+        error!("{}", error_message);
+
+        let response = Response {
+            id: None,
+            status: None,
+            data: None,
+            error: Some(error_message),
+        };
+
+        return web::Json(response);
+    }
 
     // Handle the request.
     let response = handle_request(&info).await;
 
     // Return the response as JSON.
     web::Json(response)
+}
+
+#[get("/status/{id}")]
+pub async fn status(id: web::Path<u64>) -> impl Responder {
+    // Returns the status of a prediction.
+    web::Json(format!("Status of prediction {}.", id))
 }

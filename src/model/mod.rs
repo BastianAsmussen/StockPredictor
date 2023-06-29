@@ -3,9 +3,6 @@ use pyo3::prelude::PyModule;
 use pyo3::Python;
 use time::OffsetDateTime;
 
-pub mod predictor;
-pub mod trainer;
-
 /// Calculates the increase between two numbers.
 ///
 /// # Arguments
@@ -30,7 +27,7 @@ pub fn calculate_increase(start: f64, end: f64) -> f64 {
 ///
 /// # Returns
 /// A tuple containing the predictions, the increase and the accuracy.
-pub async fn predict(
+pub fn predict(
     symbol: &str,
     period: &str,
     start: &OffsetDateTime,
@@ -52,9 +49,7 @@ pub async fn predict(
         let predict = module.getattr("predict")?;
 
         let args = (symbol, start, end, period, testing_days, future_days);
-        let output: (Vec<f64>, f64, f64) = predict
-            .call(args, None)?
-            .extract()?;
+        let output: (Vec<f64>, f64, f64) = predict.call(args, None)?.extract()?;
 
         Ok(output)
     })
