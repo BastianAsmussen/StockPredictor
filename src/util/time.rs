@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
-use time::{Duration, OffsetDateTime};
+use time::{format_description, Duration, OffsetDateTime};
 
 /// The smallest amount of time that can be used.
 pub const MINIMUM_TIME: u64 = 1;
@@ -130,4 +130,18 @@ pub fn get_time(
     let start = now - Duration::seconds(seconds as i64);
 
     Ok((start, now))
+}
+
+/// Converts the given time to a Python valid datetime.
+///
+/// # Arguments
+/// * `time` - The time to convert.
+///
+/// # Returns
+/// The converted time as a result.
+pub fn as_python_datetime(time: &OffsetDateTime) -> Result<String, Box<dyn std::error::Error>> {
+    let format = format_description::parse("[year]-[month]-[day]")?;
+    let formatted = time.format(&format)?;
+
+    Ok(formatted)
 }

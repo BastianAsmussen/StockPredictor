@@ -2,9 +2,10 @@ extern crate log;
 
 use actix_web::{App, HttpServer};
 use log::{info, warn};
+use time::macros::datetime;
+use time::OffsetDateTime;
 
 use crate::api::routes;
-use crate::model::nn;
 
 mod api;
 mod data;
@@ -35,11 +36,15 @@ async fn main() -> std::io::Result<()> {
     //     .bind((ip, port))?
     //     .run()
     //     .await?;
+    let symbol = "AAPL";
+    let period = "max";
+    let start = datetime!(2012-01-01 00:00:00 +0000);
+    let end = datetime!(2021-01-01 00:00:00 +0000);
+    let testing_days = 365;
+    let future_days = 1;
 
-    let test = nn::test_nn().await;
-    if test.is_err() {
-        println!("Error: {}", test.err().unwrap());
-    }
+    let predictions = model::predict(symbol, period, &start, &end, testing_days, future_days).await;
+    println!("{:#?}", predictions);
 
     Ok(())
 }
