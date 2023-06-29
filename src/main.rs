@@ -7,6 +7,7 @@ use crate::api::routes;
 
 mod api;
 mod model;
+mod sql;
 mod util;
 
 /// The default amount of threads to use for the HTTP server.

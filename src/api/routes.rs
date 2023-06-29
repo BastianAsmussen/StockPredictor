@@ -1,7 +1,9 @@
 use actix_web::{get, post, web, Responder};
 use log::{error, info};
+use uuid::Uuid;
 
 use crate::api::{handle_request, Request, Response};
+use crate::sql::fetcher::fetch;
 
 #[get("/")]
 pub async fn index() -> impl Responder {
@@ -34,7 +36,12 @@ pub async fn predict_post(info: web::Json<Request>) -> impl Responder {
 }
 
 #[get("/status/{id}")]
-pub async fn status(id: web::Path<u64>) -> impl Responder {
-    // Returns the status of a prediction.
-    web::Json(format!("Status of prediction {}.", id))
+pub async fn status(id: web::Path<Uuid>) -> impl Responder {
+    info!("Status request for ID {}...", id);
+
+    // Fetch the request by ID.
+    let info = fetch(id.into_inner()).await;
+
+    // Return the response as JSON.
+    web::Json(info)
 }

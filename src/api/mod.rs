@@ -1,3 +1,4 @@
+use log::error;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -18,9 +19,9 @@ pub struct Period {
 /// The deserialized request data.
 ///
 /// # Fields
+/// * `id` - The id of the request.
 /// * `symbol` - The symbol of the stock to predict.
 /// * `period` - The period to predict.
-///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Request {
@@ -30,14 +31,14 @@ pub struct Request {
 
 }
 
-/// The status of a request.
+/// The status of the request.
 ///
 /// # Variants
 /// * `Processing` - The request is still being processed.
 /// * `Finished` - The request has been finished.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum RequestStatus {
+pub enum Status {
     Processing,
     Finished,
 }
@@ -53,7 +54,7 @@ pub enum RequestStatus {
 #[serde(rename_all = "camelCase")]
 pub struct Response {
     id: Option<Uuid>,
-    status: Option<RequestStatus>,
+    status: Option<Status>,
     data: Option<String>,
     error: Option<String>,
 }
@@ -69,20 +70,30 @@ pub async fn handle_request(info: &Request) -> Response {
 async fn init_request(info: &Request) -> Response {
     Response {
         id: Some(Uuid::new_v4()),
-        status: Some(RequestStatus::Processing),
+        status: Some(Status::Processing),
         data: None,
         error: None,
     }
 }
 
 async fn get_request(info: &Request) -> Response {
-    // Look up the request in the database.
-    // If it exists, return the data.
-    // If it doesn't exist, return an error.
+    let id = info.id.as_ref();
+    if id.is_none() {
+        let error_message = "Request ID must be set on GET requests!".to_string();
+        error!("{}", error_message);
+
+        return Response {
+            id: None,
+            status: None,
+            data: None,
+            error: Some(error_message),
+        };
+    }
+
     Response {
-        id: Some(Uuid::new_v4()),
-        status: Some(RequestStatus::Finished),
-        data: None,
+        id: info.id,
+        status: Some(Status::Finished),
+        data: Some("".to_string()),
         error: None,
     }
 }
