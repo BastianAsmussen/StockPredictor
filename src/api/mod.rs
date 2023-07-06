@@ -1,99 +1,85 @@
 use log::error;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+
+use crate::model::predict;
 
 pub mod routes;
-
-/// The period to predict.
-///
-/// # Fields
-/// * `start` - The start date.
-/// * `end` - The end date.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Period {
-    start: u64,
-    end: u64,
-}
 
 /// The deserialized request data.
 ///
 /// # Fields
-/// * `id` - The id of the request.
 /// * `symbol` - The symbol of the stock to predict.
-/// * `period` - The period to predict.
+/// * `days` - The number of days to predict into the future.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Request {
-    id: Option<Uuid>,
     symbol: Option<String>,
-    period: Option<Period>,
-
-}
-
-/// The status of the request.
-///
-/// # Variants
-/// * `Processing` - The request is still being processed.
-/// * `Finished` - The request has been finished.
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum Status {
-    Processing,
-    Finished,
+    days: Option<u32>,
 }
 
 /// The response data.
 ///
 /// # Fields
-/// * `id` - The id of the request.
-/// * `status` - The status of the request.
-/// * `data` - The data of the request.
-/// * `error` - The error of the request.
+/// * `request` - The request data.
+/// * `error` - The error message if an error occurred.
+/// * `predictions` - The predictions if the request was successful.
+/// * `model_rmse` - The RMSE of the model if the request was successful.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Response {
-    id: Option<Uuid>,
-    status: Option<Status>,
-    data: Option<String>,
+    request: Request,
     error: Option<String>,
+    predictions: Option<Vec<f64>>,
+    model_rmse: Option<f64>,
 }
 
-pub async fn handle_request(info: &Request) -> Response {
-    if info.id.is_none() {
-        init_request(info).await
+pub async fn handle_request(request: &Request) -> Response {
+    let symbol = if let Some(symbol) = &request.symbol {
+        symbol
     } else {
-        get_request(info).await
-    }
-}
-
-async fn init_request(info: &Request) -> Response {
-    Response {
-        id: Some(Uuid::new_v4()),
-        status: Some(Status::Processing),
-        data: None,
-        error: None,
-    }
-}
-
-async fn get_request(info: &Request) -> Response {
-    let id = info.id.as_ref();
-    if id.is_none() {
-        let error_message = "Request ID must be set on GET requests!".to_string();
+        let error_message = "Stock ticker symbol must be set!".to_string();
         error!("{}", error_message);
 
         return Response {
-            id: None,
-            status: None,
-            data: None,
+            request: request.clone(),
             error: Some(error_message),
+            predictions: None,
+            model_rmse: None,
         };
-    }
+    };
 
-    Response {
-        id: info.id,
-        status: Some(Status::Finished),
-        data: Some("".to_string()),
-        error: None,
+    let days = if let Some(days) = &request.days {
+        days
+    } else {
+        let error_message = "Future days must be set!".to_string();
+        error!("{}", error_message);
+
+        return Response {
+            request: request.clone(),
+            error: Some(error_message),
+            predictions: None,
+            model_rmse: None,
+        };
+    };
+
+    // Process the request.
+    match predict(symbol, days) {
+        Ok(data) => Response {
+            request: request.clone(),
+            error: None,
+            predictions: Some(data.0),
+            model_rmse: Some(data.1),
+        },
+        Err(error) => {
+            let error_message = format!("An error occurred: {}", error);
+            error!("{}", error_message);
+
+            Response {
+                request: request.clone(),
+                error: Some(error_message),
+                predictions: None,
+                model_rmse: None,
+            }
+        }
     }
 }
