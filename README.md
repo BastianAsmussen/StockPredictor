@@ -21,23 +21,43 @@ Predict the price of a stock using the power of machine learning!
     ```sh
     cd stock_predictor
     ```
-3. Build the Docker image.
+3. Create a `.env` file.
     ```sh
-    docker build -t stock_predictor .
-    ```
-4. Create a `.env` file.
-    ```sh
-    touch .env
-
+    $ touch .env
+   
     # Add the following to the .env file.
     # WORKERS=4
     # IP="127.0.0.1"
     # PORT=8080
     ```
-5. Customize the docker-compose.yml file to your liking and then run it.
+4. Compile the project.
     ```sh
-    docker-compose up --env-file .env
+    cargo build --release
     ```
+5. Getting logger information. (Optional)
+
+### Linux
+
+   ```sh
+   source RUST_LOG=stock_predictor # Set the environment variable.
+   ```
+
+### Windows
+
+   ```sh
+   set RUST_LOG=stock_predictor # Set the environment variable.
+    ```
+6. Run the project.
+  ### Linux
+  ```sh
+  ./target/release/stock_predictor
+  ```
+
+### Windows
+
+   ```sh
+   .\target\release\stock_predictor.exe
+   ```
 
 ## Environment Variables (Server Side)
 
