@@ -51,7 +51,7 @@ Predict the price of a stock using the power of machine learning!
 
 1. Send a `GET` request to the server.
     ```sh
-    curl -X GET "http://127.0.0.1:8080/predict" -H "Content-Type: application/json" -d '{ "symbol": "AAPL", "time": { "unit": "weeks", "value": 1 }, "datasetSize": { "unit": "months", "value": 6 } }'
+    curl -X GET "http://127.0.0.1:8080/predict" -H "Content-Type: application/json" -d '{ "symbol": "AAPL", "days": 7 }'
     ```
 
 # Example Request
@@ -59,33 +59,16 @@ Predict the price of a stock using the power of machine learning!
 ```json
 {
   "symbol": "AAPL",
-  "time": {
-    "unit": "weeks",
-    "value": 1
-  },
-  "datasetSize": {
-    "unit": "months",
-    "value": 6
-  }
+  "days": 7
 }
 ```
 
 ## Request Fields
 
-| Field       | Type   | Description                             |
-|-------------|--------|-----------------------------------------|
-| symbol      | string | The stock symbol.                       |
-| time        | object | The time unit and value to use.         |
-| datasetSize | object | The dataset size unit and value to use. |
-
-## Time Unit Fields
-
-| Unit   | Value | Description                  |
-|--------|-------|------------------------------|
-| days   | int   | The number of days to use.   |
-| weeks  | int   | The number of weeks to use.  |
-| months | int   | The number of months to use. |
-| years  | int   | The number of years to use.  |
+| Field  | Type   | Description                                    |
+|--------|--------|------------------------------------------------|
+| symbol | string | The stock symbol.                              |
+| days   | int    | The number of days to predict into the future. |
 
 # Example Response
 
@@ -93,43 +76,30 @@ Predict the price of a stock using the power of machine learning!
 {
   "request": {
     "symbol": "AAPL",
-    "time": {
-      "unit": "weeks",
-      "value": 1
-    },
-    "datasetSize": {
-      "unit": "months",
-      "value": 6
-    }
+    "days": 7
   },
-  "errorMessage": null,
-  "currentAdjustedClose": 188.05999755859375,
-  "modelR2Score": 0.9961243083624973,
+  "error": null,
   "predictions": [
-    185.89104281924475,
-    185.89207717957356,
-    185.893102549463,
-    185.89411900705608,
-    185.89512662981653,
-    185.89612549453486,
-    185.8971156773341
+    191.48390197753906,
+    192.28878784179688,
+    192.40756225585938,
+    192.34530639648438,
+    192.67547607421875,
+    193.71231079101562,
+    193.5487518310547
   ],
-  "increase": -0.011501020468671167,
-  "shouldBuy": false
+  "modelRmse": 0.00010840992763405666
 }
 ```
 
 ## Response Fields
 
-| Field                | Type    | Description                                       |
-|----------------------|---------|---------------------------------------------------|
-| request              | object  | The request that was sent to the server.          |
-| errorMessage         | string  | The error message if an error occurred.           |
-| currentAdjustedClose | float   | The current adjusted close price of the stock.    |
-| modelR2Score         | float   | The R2 score of the model.                        |
-| predictions          | float[] | The predicted adjusted close prices of the stock. |
-| increase             | float   | The increase or decrease of the stock.            |
-| shouldBuy            | boolean | Whether or not the stock should be bought.        |
+| Field       | Type    | Description                               |
+|-------------|---------|-------------------------------------------|
+| request     | object  | The request that was sent to the server.  |
+| error       | string  | The error message if an error occurred.   |
+| predictions | array   | The predicted prices.                     |
+| modelRmse   | float64 | The root mean squared error of the model. |
 
 # Compiling
 
