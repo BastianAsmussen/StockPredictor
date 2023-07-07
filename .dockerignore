@@ -1,8 +1,0 @@
-# Rust
-/target
-
-# IntelliJ IDEA
-/.idea
-
-# Docker
-docker-compose.yml
