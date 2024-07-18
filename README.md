@@ -15,13 +15,9 @@ Predict the price of a stock using the power of machine learning!
 
 1. Clone the repository.
     ```sh
-    git clone https://github.com/BastianAsmussen/Stock-Predictor.git as stock_predictor
+    git clone https://github.com/BastianAsmussen/StockPredictor.git
     ```
-2. Change directory to the project folder.
-    ```sh
-    cd stock_predictor
-    ```
-3. Create a `.env` file.
+2. Create a `.env` file.
     ```sh
     $ touch .env
    
@@ -30,11 +26,11 @@ Predict the price of a stock using the power of machine learning!
     # IP="127.0.0.1"
     # PORT=8080
     ```
-4. Compile the project.
+3. Compile the project.
     ```sh
     cargo build --release
     ```
-5. Getting logger information. (Optional)
+4. Getting logger information. (Optional)
 
 ### Linux
 
